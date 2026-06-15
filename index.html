@@ -49,10 +49,14 @@
 
     .player-list { display: flex; flex-direction: column; gap: 7px; }
     .player-item { display: flex; align-items: center; gap: 8px; padding: 9px 12px; background: var(--gray-light); border-radius: var(--radius-sm); animation: fadeIn 0.2s ease; }
-    .player-name { flex: 1; font-weight: 600; font-size: 0.92rem; }
+    .player-name { flex: 1; font-weight: 600; font-size: 0.92rem; min-width: 0; }
     .badge { padding: 3px 9px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+    .gender-badge { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .gender-icon { display: inline-flex; align-items: center; justify-content: center; width: 1rem; height: 1rem; border-radius: 999px; }
+    .gender-icon svg { width: 0.85rem; height: 0.85rem; }
     .badge-M { background: var(--blue-light); color: var(--blue); }
     .badge-F { background: var(--pink-light); color: var(--pink); }
+    .tpname { display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; font-size: 0.95rem; font-weight: 700; line-height: 1.5; }
     .remove-btn { background: none; border: none; cursor: pointer; color: var(--gray); font-size: 1.1rem; padding: 2px 6px; border-radius: 6px; transition: all 0.15s; line-height: 1; }
     .remove-btn:hover { background: #fee2e2; color: #ef4444; }
     .p-hint { text-align: center; font-size: 0.83rem; color: var(--gray); margin-top: 10px; }
@@ -106,6 +110,25 @@
     .win-btn-def { background: #f59e0b; color: white; }   /* amber - defender */
     .win-btn-chal { background: var(--purple); color: white; } /* purple - challenger */
 
+    .score-card { border-radius: var(--radius-sm); padding: 16px; margin-bottom: 14px; background: linear-gradient(135deg, #ebf8f1, #d9f7d8); border: 1px solid #a7d7a0; }
+    .scorecard-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+    .court-note { font-size: 0.82rem; color: #25472e; margin-top: 4px; }
+    .court-view { position: relative; border: 2px solid #4f9c2d; border-radius: 20px; background: linear-gradient(180deg, #d9f7d8 0%, #b7e4b3 100%); min-height: 280px; display: grid; grid-template-rows: 1.1fr 32px 1.1fr; overflow: hidden; }
+    .court-view::before { content: ''; position: absolute; inset: 12px; border: 2px solid rgba(255,255,255,0.75); border-radius: 18px; pointer-events: none; }
+    .court-side { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 18px 12px; position: relative; }
+    .court-top { border-bottom: 1px dashed rgba(255,255,255,0.55); }
+    .court-bottom { border-top: 1px dashed rgba(255,255,255,0.55); }
+    .court-net { display: flex; align-items: center; justify-content: center; color: #1f2937; font-size: 1rem; letter-spacing: 0.12em; font-weight: 800; text-transform: uppercase; }
+    .court-net::before, .court-net::after { content: ''; flex: 1; height: 1px; background: rgba(31,41,55,0.2); margin: 0 14px; }
+    .court-team { font-weight: 800; color: #17360f; margin-bottom: 8px; white-space: nowrap; font-size: 0.98rem; }
+    .court-score { font-size: 3.4rem; font-weight: 900; color: #1f5f2d; letter-spacing: -0.05em; }
+    .court-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+    .court-actions button { width: 100%; }
+    .gender-icon { display: inline-flex; align-items: center; justify-content: center; width: 0.95rem; height: 0.95rem; border-radius: 999px; font-weight: 700; color: white; font-size: 0.75rem; margin-right: 6px; }
+    .gender-letter { display: inline-flex; align-items: center; justify-content: center; width: 0.95rem; height: 0.95rem; border-radius: 999px; font-weight: 700; font-size: 0.75rem; }
+    .badge-M .gender-letter, .gender-icon.M { background: var(--blue); }
+    .badge-F .gender-letter, .gender-icon.F { background: var(--pink); }
+
     /* Waiting */
     .waiting-chips { display: flex; flex-wrap: wrap; gap: 7px; }
     .waiting-chip { padding: 5px 12px; background: var(--amber-light); border: 1px solid #fcd34d; border-radius: 999px; font-size: 0.82rem; font-weight: 600; color: #92400e; }
@@ -145,6 +168,14 @@
     .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); background: #1e293b; color: white; padding: 10px 22px; border-radius: 999px; font-weight: 700; font-size: 0.95rem; box-shadow: 0 4px 20px #0004; z-index: 9999; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); white-space: nowrap; pointer-events: none; }
     .toast.show { transform: translateX(-50%) translateY(0); }
 
+    .modal { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(15,23,42,0.45); z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+    .modal.show { opacity: 1; pointer-events: auto; }
+    .modal.hidden { display: none !important; }
+    .modal-card { width: min(420px, calc(100% - 32px)); border-radius: 18px; background: white; padding: 22px; box-shadow: 0 18px 45px rgba(15,23,42,0.25); }
+    .modal-title { font-size: 1rem; font-weight: 800; margin-bottom: 12px; color: #111827; }
+    .modal-body { font-size: 0.95rem; color: #4b5563; line-height: 1.6; margin-bottom: 18px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
     .empty { text-align: center; padding: 28px; color: var(--gray); }
     .empty .ei { font-size: 2.2rem; margin-bottom: 6px; }
 
@@ -160,6 +191,16 @@
 </head>
 <body>
 <div id="toast" class="toast"></div>
+<div id="app-modal" class="modal hidden" onclick="if (event.target === this) closeModal()">
+  <div class="modal-card">
+    <div id="modal-title" class="modal-title">แจ้งเตือน</div>
+    <div id="modal-body" class="modal-body">...</div>
+    <div class="modal-actions">
+      <button id="modal-cancel" class="btn btn-gray btn-sm" onclick="closeModal()">ยกเลิก</button>
+      <button id="modal-confirm" class="btn btn-green btn-sm">ยืนยัน</button>
+    </div>
+  </div>
+</div>
 <div class="container">
   <header>
     <h1>🏸 จัดก๊วนแบดมินตัน</h1>
@@ -196,6 +237,9 @@
     <div class="game-top">
       <div class="round-pill" id="round-pill">เกมที่ 1</div>
       <div class="top-actions">
+        <button class="btn btn-gray btn-sm" onclick="undoLastMatch()" id="undo-btn" disabled>↩️ ยกเลิก</button>
+        <button class="btn btn-gray btn-sm" onclick="exportHistory('json')">⬇️ JSON</button>
+        <button class="btn btn-gray btn-sm" onclick="exportHistory('csv')">⬇️ CSV</button>
         <button class="btn btn-gray btn-sm" onclick="goSetup()">✏️ ผู้เล่น</button>
         <button class="btn btn-red btn-sm" onclick="clearAll()">🗑 ล้างใหม่</button>
       </div>
@@ -208,8 +252,24 @@
       <div class="win-btns" id="win-btns"></div>
     </div>
 
+    <div class="card score-card">
+      <div class="scorecard-header">
+        <div>
+          <div class="card-title">🎯 นับแต้ม</div>
+          <div id="score-orientation-text" class="court-note"></div>
+        </div>
+        <button class="btn btn-gray btn-sm" onclick="switchCourtSide()">สลับฝั่ง</button>
+      </div>
+      <div class="court-view" id="court-view"></div>
+      <div class="court-actions">
+        <button class="btn btn-gray btn-sm" onclick="incrementScore(2)">+1 ฝั่งบน</button>
+        <button class="btn btn-gray btn-sm" onclick="resetScore()">รีเซ็ตคะแนน</button>
+        <button class="btn btn-gray btn-sm" onclick="incrementScore(1)">+1 ฝั่งล่าง</button>
+      </div>
+    </div>
+
     <div class="card">
-      <div class="card-title">⏳ รอเล่น</div>
+      <div class="card-title">🎮 เกม</div>
       <div id="wait-area" class="waiting-chips"></div>
     </div>
 
@@ -226,24 +286,57 @@
 
 <script>
 // ── STATE ──────────────────────────────────────────────────────────────────
-// player: { id, name, gender, gamesPlayed, wins, waitCount, lastPartnerId, lastOpponentIds }
-// match:  { team1, team2, waiting, isDefending, streak }
+// player: { id, name, gender, gamesPlayed, wins, waitCount, lastPartnerIds, lastOpponentIds }
+// match:  { team1, team2, waiting, isDefending, streak, defenderSide }
 //   team1 = defending team when isDefending=true (streak = their consecutive win count)
 let S = { players: [], match: null, history: [], round: 0, started: false };
+let prevState = null;
 const KEY = 'badminton-v3';
-function save() { localStorage.setItem(KEY, JSON.stringify(S)); }
+function cloneState(state) {
+  return JSON.parse(JSON.stringify(state));
+}
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(S));
+}
 function load() {
-  try { const d = localStorage.getItem(KEY); if (d) { S = JSON.parse(d); return true; } } catch(e) {}
+  try {
+    const d = localStorage.getItem(KEY);
+    if (d) { S = JSON.parse(d); normalizePlayers(); normalizeMatch(); return true; }
+  } catch(e) {}
   // migrate from v2 key
-  try { const d = localStorage.getItem('badminton-v2'); if (d) { S = JSON.parse(d); return true; } } catch(e) {}
+  try {
+    const d = localStorage.getItem('badminton-v2');
+    if (d) { S = JSON.parse(d); normalizePlayers(); return true; }
+  } catch(e) {}
   return false;
+}
+function normalizePlayers() {
+  S.players.forEach(p => {
+    if (!Array.isArray(p.lastPartnerIds)) {
+      p.lastPartnerIds = p.lastPartnerId ? [p.lastPartnerId] : [];
+    }
+    if (!Array.isArray(p.lastOpponentIds)) {
+      p.lastOpponentIds = p.lastOpponentIds ? p.lastOpponentIds : [];
+    }
+    delete p.lastPartnerId;
+  });
+}
+
+function normalizeMatch() {
+  if (!S.match) return;
+  S.match.score1 = typeof S.match.score1 === 'number' ? S.match.score1 : 0;
+  S.match.score2 = typeof S.match.score2 === 'number' ? S.match.score2 : 0;
+  S.match.courtSide = S.match.courtSide === 2 ? 2 : 1;
 }
 function P(id) { return S.players.find(p => p.id === id); }
 
 // ── ALGORITHM ─────────────────────────────────────────────────────────────
 
-// Score a pair (a, b) from the pool against the defending team.
-// Higher = better choice as challengers.
+function hasRecentPartner(a, b) {
+  return (Array.isArray(a.lastPartnerIds) && a.lastPartnerIds.includes(b.id)) ||
+         (Array.isArray(b.lastPartnerIds) && b.lastPartnerIds.includes(a.id));
+}
+
 function scorePair(a, b, defenderIds, avgGames) {
   let score = 0;
   // Urgency: people who waited more or played less get priority
@@ -251,9 +344,9 @@ function scorePair(a, b, defenderIds, avgGames) {
   score += b.waitCount * 3 + Math.max(0, avgGames - b.gamesPlayed);
   // Mixed doubles bonus
   if (a.gender !== b.gender) score += 4;
-  // Avoid repeat partners
-  if (a.lastPartnerId === b.id || b.lastPartnerId === a.id) score -= 4;
-  // Avoid rematch (same opponent pair as last time defenders played)
+  // Avoid repeat partners across recent rounds
+  if (hasRecentPartner(a, b)) score -= 4;
+  // Avoid rematch against the same defending team
   if (defenderIds) {
     const d0opps = (P(defenderIds[0]).lastOpponentIds || []);
     if (d0opps.includes(a.id) && d0opps.includes(b.id)) score -= 5;
@@ -281,7 +374,7 @@ function scoreSplit(split, ids) {
   for (const [i, j] of split) {
     const a = P(ids[i]), b = P(ids[j]);
     if (a.gender !== b.gender) score += 4;
-    if (a.lastPartnerId === b.id || b.lastPartnerId === a.id) score -= 4;
+    if (hasRecentPartner(a, b)) score -= 4;
   }
   return score + Math.random() * 0.15;
 }
@@ -312,7 +405,8 @@ function genFirstMatch() {
   const playing = scored.slice(0, 4).map(x => x.id);
   const waiting = scored.slice(4).map(x => x.id);
   const pairs = formPairs(playing);
-  S.match = { team1: pairs.team1, team2: pairs.team2, waiting, isDefending: false, streak: 0 };
+  playing.forEach(id => { const p = P(id); if (p) p.waitCount = 0; });
+  S.match = { team1: pairs.team1, team2: pairs.team2, waiting, isDefending: false, streak: 0, score1: 0, score2: 0, courtSide: 1 };
   S.round++;
 }
 
@@ -324,7 +418,8 @@ function genNextMatch(winnerIds, loserIds, prevWaiting, newStreak, winnerSide) {
   // Keep winners on the same side they were playing on
   const team1 = winnerSide === 1 ? winnerIds : challengers;
   const team2 = winnerSide === 2 ? winnerIds : challengers;
-  S.match = { team1, team2, waiting, isDefending: true, streak: newStreak, defenderSide: winnerSide };
+  [...team1, ...team2].forEach(id => { const p = P(id); if (p) p.waitCount = 0; });
+  S.match = { team1, team2, waiting, isDefending: true, streak: newStreak, defenderSide: winnerSide, score1: 0, score2: 0, courtSide: 1 };
   S.round++;
 }
 
@@ -338,7 +433,7 @@ function addPlayer() {
   }
   const gender = document.querySelector('input[name="g"]:checked').value;
   const id = crypto.randomUUID ? crypto.randomUUID() : Date.now() + Math.random().toString(36).slice(2);
-  S.players.push({ id, name, gender, gamesPlayed: 0, wins: 0, waitCount: 0, lastPartnerId: null, lastOpponentIds: [] });
+  S.players.push({ id, name, gender, gamesPlayed: 0, wins: 0, waitCount: 0, lastPartnerIds: [], lastOpponentIds: [] });
   inp.value = ''; inp.focus();
   save(); renderSetup();
 }
@@ -350,14 +445,28 @@ function removePlayer(id) {
 
 function startGame() {
   if (S.players.length < 4) return;
+  prevState = null;
   S.started = true;
   genFirstMatch();
   save(); show('game'); renderGame();
 }
 
+let pendingWinTeam = null;
+
+function requestRecordWin(team) {
+  const m = S.match;
+  const winnerIds = team === 1 ? m.team1 : m.team2;
+  const name = winnerIds.map(id => P(id).name).join(' & ');
+  pendingWinTeam = team;
+  document.getElementById('confirm-text').textContent = `ยืนยันผลการแข่งขัน: ${name} ชนะ?`;
+  document.getElementById('confirm-modal').classList.remove('hidden');
+  document.getElementById('confirm-modal').classList.add('show');
+}
+
 function recordWin(team) {
   const m = S.match;
   const winnerIds = team === 1 ? m.team1 : m.team2;
+  prevState = cloneState(S);
   const loserIds  = team === 1 ? m.team2 : m.team1;
   const isDefending = m.isDefending || false;
   const defenderSide = m.defenderSide || 1;
@@ -368,13 +477,29 @@ function recordWin(team) {
   m.waiting.forEach(id => P(id).waitCount++);
   winnerIds.forEach(id => P(id).wins++);
 
-  // Update last partner (each player remembers who they just partnered with)
-  m.team1.forEach(id => { P(id).lastPartnerId = m.team1.find(x => x !== id); });
-  m.team2.forEach(id => { P(id).lastPartnerId = m.team2.find(x => x !== id); });
+  // Update recent partners
+  m.team1.forEach(id => {
+    const player = P(id);
+    const partnerId = m.team1.find(x => x !== id);
+    player.lastPartnerIds = [partnerId, ...(player.lastPartnerIds || [])].filter(Boolean).slice(0, 2);
+  });
+  m.team2.forEach(id => {
+    const player = P(id);
+    const partnerId = m.team2.find(x => x !== id);
+    player.lastPartnerIds = [partnerId, ...(player.lastPartnerIds || [])].filter(Boolean).slice(0, 2);
+  });
 
-  // Update last opponents (both teams remember who they just faced)
-  winnerIds.forEach(id => { P(id).lastOpponentIds = [...loserIds]; });
-  loserIds.forEach(id => { P(id).lastOpponentIds = [...winnerIds]; });
+  // Update recent opponents
+  winnerIds.forEach(id => {
+    const player = P(id);
+    const merged = [...loserIds, ...(player.lastOpponentIds || [])];
+    player.lastOpponentIds = merged.filter((x, i, arr) => arr.indexOf(x) === i).slice(0, 4);
+  });
+  loserIds.forEach(id => {
+    const player = P(id);
+    const merged = [...winnerIds, ...(player.lastOpponentIds || [])];
+    player.lastOpponentIds = merged.filter((x, i, arr) => arr.indexOf(x) === i).slice(0, 4);
+  });
 
   // Calculate new streak for the winners
   const newStreak = defenderWon ? (m.streak || 0) + 1 : 1;
@@ -390,15 +515,15 @@ function recordWin(team) {
 
   // Toast + next match
   const MAX_STREAK = 2;
-  const wn = (team === 1 ? t1n : t2n).join(' & ');
+  const resultName = (team === 1 ? t1n : t2n).join(' & ');
   const rotateOut = isDefending && defenderWon && newStreak >= MAX_STREAK;
 
   S.history[0].rotateOut = rotateOut;
 
-  if (!isDefending)     showToast(`🏆 ${wn} ชนะ!`);
-  else if (rotateOut)   showToast(`👑 ${wn} ครบ 2 ชัย! ออกพักสุ่มใหม่ 🔄`);
-  else if (defenderWon) showToast(`👑 ${wn} รักษาแชมป์! ⚠️ ชนะอีกครั้งต้องออก`);
-  else                  showToast(`⚡ ${wn} โค่นแชมป์ได้!`);
+  if (!isDefending)     showToast(`🏆 ${resultName} ชนะ!`);
+  else if (rotateOut)   showToast(`👑 ${resultName} ครบ 2 ชัย! ออกพักสุ่มใหม่ 🔄`);
+  else if (defenderWon) showToast(`👑 ${resultName} รักษาแชมป์! ⚠️ ชนะอีกครั้งต้องออก`);
+  else                  showToast(`⚡ ${resultName} โค่นแชมป์ได้!`);
 
   // Generate next match
   if (rotateOut) genFirstMatch();          // max streak hit → fresh fair draw
@@ -409,21 +534,125 @@ function recordWin(team) {
   mc.classList.remove('pulse'); void mc.offsetWidth; mc.classList.add('pulse');
 }
 
+function confirmRecordWin() {
+  if (pendingWinTeam === null) return;
+  closeConfirmModal();
+  recordWin(pendingWinTeam);
+  pendingWinTeam = null;
+}
+
+function closeConfirmModal() {
+  const modal = document.getElementById('confirm-modal');
+  modal.classList.remove('show');
+  modal.classList.add('hidden');
+}
+
+function incrementScore(side) {
+  if (!S.match) return;
+  if (side === 1) {
+    S.match.courtSide === 1 ? S.match.score1++ : S.match.score2++;
+  } else {
+    S.match.courtSide === 1 ? S.match.score2++ : S.match.score1++;
+  }
+  save(); renderGame();
+}
+
+function resetScore() {
+  if (!S.match) return;
+  S.match.score1 = 0;
+  S.match.score2 = 0;
+  save(); renderGame();
+}
+
+function switchCourtSide() {
+  if (!S.match) return;
+  S.match.courtSide = S.match.courtSide === 1 ? 2 : 1;
+  save(); renderGame();
+}
+
 function goSetup() {
+  prevState = null;
   S.started = false; save();
   show('setup'); renderSetup();
 }
 
+function undoLastMatch() {
+  if (!prevState) {
+    showToast('ไม่มีผลลัพธ์ล่าสุดให้ย้อนกลับ');
+    return;
+  }
+  S = cloneState(prevState);
+  prevState = null;
+  save();
+  show('game'); renderGame();
+  showToast('ยกเลิกผลการแข่งขันล่าสุดแล้ว');
+}
+
+function exportHistory(format) {
+  if (!S.history.length) {
+    showToast('ยังไม่มีประวัติให้ส่งออก');
+    return;
+  }
+  const data = {
+    players: S.players,
+    match: S.match,
+    history: S.history,
+    round: S.round
+  };
+  if (format === 'csv') {
+    const rows = [
+      ['round','winner','team1','team2','isDefending','defenderWon','oldStreak','newStreak','time']
+    ];
+    S.history.forEach(rec => {
+      rows.push([
+        rec.round,
+        rec.winner,
+        rec.t1Names.join(' & '),
+        rec.t2Names.join(' & '),
+        rec.isDefending ? '1' : '0',
+        rec.defenderWon ? '1' : '0',
+        rec.oldStreak,
+        rec.newStreak,
+        rec.time
+      ]);
+    });
+    const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+    downloadFile('badminton-history.csv', csv, 'text/csv');
+  } else {
+    downloadFile('badminton-history.json', JSON.stringify(data, null, 2), 'application/json');
+  }
+}
+
+function downloadFile(filename, content, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 function clearAll() {
-  if (!confirm('ล้างข้อมูลทั้งหมด?\nสถิติและประวัติจะหายทั้งหมด')) return;
-  S = { players: [], match: null, history: [], round: 0, started: false };
-  localStorage.removeItem(KEY);
-  show('setup'); renderSetup();
+  showConfirm('ล้างข้อมูลทั้งหมด?\nสถิติและประวัติจะหายทั้งหมด', () => {
+    prevState = null;
+    S = { players: [], match: null, history: [], round: 0, started: false };
+    localStorage.removeItem(KEY);
+    show('setup'); renderSetup();
+  }, 'ล้างทั้งหมด', 'ล้าง', 'ยกเลิก');
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────
 function h(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function genderBadge(gender) {
+  return `<span class="badge gender-badge badge-${gender}"><span class="gender-letter">${gender}</span><span>${gender === 'M' ? 'ชาย' : 'หญิง'}</span></span>`;
+}
+
+function genderIcon(gender) {
+  return `<span class="gender-icon ${gender}"><span class="gender-letter">${gender}</span></span>`;
 }
 
 function pairLabel(g1, g2) {
@@ -442,7 +671,7 @@ function renderSetup() {
     : S.players.map(p => `
       <div class="player-item">
         <span class="player-name">${h(p.name)}</span>
-        <span class="badge badge-${p.gender}">${p.gender === 'M' ? '♂ ชาย' : '♀ หญิง'}</span>
+        ${genderBadge(p.gender)}
         ${p.gamesPlayed > 0 ? `<span style="font-size:0.78rem;color:var(--gray)">${p.gamesPlayed} เกม</span>` : ''}
         <button class="remove-btn" onclick="removePlayer('${p.id}')">✕</button>
       </div>`).join('');
@@ -460,6 +689,7 @@ function renderGame() {
   const defenderSide = m.defenderSide || 1;
 
   document.getElementById('round-pill').textContent = `เกมที่ ${S.round}`;
+  document.getElementById('undo-btn').disabled = !prevState;
 
   // Match card style
   const mc = document.getElementById('match-card');
@@ -488,7 +718,7 @@ function renderGame() {
     const labels = { defender: '👑 แชมป์เก่า', challenger: '⚡ ผู้ท้าชิง', t1: 'ทีม 1', t2: 'ทีม 2' };
     return `<div class="team-panel ${role}">
       <div class="team-num">${labels[role]}</div>
-      ${ps.map(p => `<div class="tpname">${h(p.name)} <span class="pg">${p.gender === 'M' ? '♂' : '♀'}</span></div>`).join('')}
+      ${ps.map(p => `<div class="tpname">${h(p.name)} ${genderIcon(p.gender)}</div>`).join('')}
       ${pairLabel(ps[0].gender, ps[1].gender)}
     </div>`;
   }
@@ -508,8 +738,8 @@ function renderGame() {
   const btn1txt = defending && defenderSide === 1 ? '👑 รักษาแชมป์!' : defending ? `⚡ ${h(t1n)} ชนะ!` : `🏆 ${h(t1n)} ชนะ`;
   const btn2txt = defending && defenderSide === 2 ? '👑 รักษาแชมป์!' : defending ? `⚡ ${h(t2n)} ชนะ!` : `🏆 ${h(t2n)} ชนะ`;
   document.getElementById('win-btns').innerHTML = `
-    <button class="win-btn ${btn1cls}" onclick="recordWin(1)">${btn1txt}</button>
-    <button class="win-btn ${btn2cls}" onclick="recordWin(2)">${btn2txt}</button>`;
+    <button class="win-btn ${btn1cls}" onclick="requestRecordWin(1)">${btn1txt}</button>
+    <button class="win-btn ${btn2cls}" onclick="requestRecordWin(2)">${btn2txt}</button>`;
 
   // Waiting list
   const wa = document.getElementById('wait-area');
@@ -517,8 +747,28 @@ function renderGame() {
     ? '<span style="color:var(--gray);font-size:0.87rem">✅ ทุกคนได้เล่นรอบนี้!</span>'
     : m.waiting.map(id => {
         const p = P(id);
-        return `<div class="waiting-chip">${p.gender === 'M' ? '♂' : '♀'} ${h(p.name)} <small style="opacity:0.75">(รอ ${p.waitCount})</small></div>`;
+        return `<div class="waiting-chip">${genderIcon(p.gender)} ${h(p.name)} <small style="opacity:0.75">(เล่นไปแล้ว ${p.gamesPlayed} เกม)</small></div>`;
       }).join('');
+  const courtView = document.getElementById('court-view');
+  const orientationText = document.getElementById('score-orientation-text');
+  const isBottomTeam1 = m.courtSide === 1;
+  const topTeam = isBottomTeam1 ? m.team2 : m.team1;
+  const bottomTeam = isBottomTeam1 ? m.team1 : m.team2;
+  const topScore = isBottomTeam1 ? m.score2 : m.score1;
+  const bottomScore = isBottomTeam1 ? m.score1 : m.score2;
+  const topName = topTeam.map(id => P(id).name).join(' & ');
+  const bottomName = bottomTeam.map(id => P(id).name).join(' & ');
+  courtView.innerHTML = `
+    <div class="court-side court-top">
+      <div class="court-team">${h(topName)}</div>
+      <div class="court-score">${topScore}</div>
+    </div>
+    <div class="court-net">NET</div>
+    <div class="court-side court-bottom">
+      <div class="court-team">${h(bottomName)}</div>
+      <div class="court-score">${bottomScore}</div>
+    </div>`;
+  orientationText.textContent = `คุณนับคะแนนจากฝั่งล่าง — ${bottomName}`;
 
   renderStats(); renderHistory();
 }
@@ -545,14 +795,14 @@ function renderStats() {
     }
     const wp = p.gamesPlayed ? Math.round(p.wins / p.gamesPlayed * 100) : 0;
     return `<tr class="${cls}">
-      <td><span class="badge badge-${p.gender}" style="font-size:0.7rem;padding:2px 7px">${p.gender}</span> ${h(p.name)}${icon}</td>
-      <td>${p.gamesPlayed}</td><td>${p.wins}</td><td>${p.waitCount}</td><td>${wp}%</td>
+      <td>${genderIcon(p.gender)} ${h(p.name)}${icon}</td>
+      <td>${p.gamesPlayed}</td><td>${p.waitCount}</td><td>${p.wins}</td><td>${wp}%</td>
     </tr>`;
   }).join('');
 
   document.getElementById('pane-stats').innerHTML = `
     <table class="stats">
-      <thead><tr><th>ผู้เล่น</th><th>เกม</th><th>ชนะ</th><th>รอ</th><th>%ชนะ</th></tr></thead>
+      <thead><tr><th>ผู้เล่น</th><th>เกม</th><th>รอ</th><th>ชนะ</th><th>%ชนะ</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
@@ -610,7 +860,14 @@ function showToast(msg) {
 
 // ── MOCK DATA ─────────────────────────────────────────────────────────────
 function loadMockData() {
-  if (S.players.length > 0 && !confirm('มีผู้เล่นอยู่แล้ว ต้องการแทนที่ด้วยข้อมูลทดสอบ?')) return;
+  if (S.players.length > 0) {
+    showConfirm('มีผู้เล่นอยู่แล้ว ต้องการแทนที่ด้วยข้อมูลทดสอบ?', applyMockData, 'โหลดข้อมูลทดสอบ', 'แทนที่', 'ยกเลิก');
+    return;
+  }
+  applyMockData();
+}
+
+function applyMockData() {
   const mock = [
     { name: 'ฟลุค',   gender: 'M' },
     { name: 'ไผ่',    gender: 'M' },
@@ -626,7 +883,7 @@ function loadMockData() {
   S.players = mock.map(m => ({
     id: crypto.randomUUID ? crypto.randomUUID() : Date.now() + Math.random().toString(36).slice(2),
     name: m.name, gender: m.gender,
-    gamesPlayed: 0, wins: 0, waitCount: 0, lastPartnerId: null, lastOpponentIds: []
+    gamesPlayed: 0, wins: 0, waitCount: 0, lastPartnerIds: [], lastOpponentIds: []
   }));
   save(); renderSetup();
   showToast('โหลดข้อมูลทดสอบ 10 คนแล้ว!');
