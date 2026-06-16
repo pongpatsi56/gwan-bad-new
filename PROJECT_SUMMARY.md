@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is a **Thai-language web application** for managing badminton player groups and automatically creating fair match pairings. The app ensures every player gets to play equally while maintaining game competition balance through a sophisticated pairing algorithm.
+This is a **Thai-language, single-file web application** for managing badminton player groups and automatically creating fair match pairings. The entire app lives in `index.html` (HTML + CSS + JS, no build step, no dependencies).
 
 **Live Demo:** https://pongpatsi56.github.io/gwan-bad-new/
 
@@ -11,124 +11,104 @@ This is a **Thai-language web application** for managing badminton player groups
 ## Purpose & Features
 
 ### Core Purpose
-- **Group Management**: Add and manage badminton players with gender information
-- **Fair Pairing**: Automatically pair 4 players into 2 teams for each match
-- **Defender System**: Winners stay to defend their position against new challengers
-- **Play Balance**: Track who played how many games and who's still waiting, ensuring everyone plays equally
-- **Statistics Tracking**: Record wins, losses, play count, win percentage for each player
-- **History Recording**: Log all matches with results, streaks, and rotation-outs
-
-### Key Features
-1. **Setup Phase**
-   - Add players with names and gender (Male/Female)
-   - Minimum 4 players required to start a game
-   - Test data button for quick testing
-
-2. **Game Phase**
-   - Real-time match display with current round number
-   - Two game modes:
-     - **Normal Mode** (First match): Fair random selection of 4 players → best pairing
-     - **Defending Mode** (Subsequent matches): Winners stay as defending team vs best challengers
-   - Waiting queue showing players not in current match
-   - Win buttons for recording match results
-
-3. **Rotation System**
-   - **Streak Limit**: If a defending team wins 2 consecutive matches, they rotate out and a fresh fair draw happens
-   - This prevents the same players from dominating and ensures everyone gets fair chances
-
-4. **Statistics**
-   - Player stats table showing: Games Played, Wins, Wait Count, Win %
-   - Color-coded by team/status (Defender, Challenger, Waiting)
-
-5. **History Log**
-   - Records all matches chronologically
-   - Shows winners, losers, streaks, and rotation rotations
-   - Displays match time stamps
-
-6. **Data Persistence**
-   - Automatically saves to browser's localStorage under key 'badminton-v3'
-   - Data persists between sessions
-   - Old 'badminton-v2' data can be automatically migrated
+- **Group Management**: Add and manage badminton players with gender (M/F)
+- **Fair Pairing**: Automatically pick 4 players and form 2 teams each round
+- **Defender System**: Winners stay on court to defend against new challengers
+- **Play Balance**: Track `gamesPlayed` and `waitCount` so everyone gets equal time
+- **Score Tracking**: Real-time per-match score with undo and court-side switching
+- **Statistics & History**: Wins, wait count, win %, full match log
 
 ---
 
-## How It Works
+## Game Flow
 
-### Algorithm Details
-
-#### 1. **Pair Scoring Function** (`scorePair`)
-When selecting challengers, the algorithm scores each potential pair against the defending team:
-- **Urgency Factor**: Players who waited longer or played fewer games get priority
-  - `waitCount * 3 + max(0, avgGames - gamesPlayed)`
-- **Mixed Doubles Bonus**: +4 points for pairing opposite genders
-- **Partner Avoidance**: -4 points if they partnered last time
-- **Rematch Avoidance**: -5 points if they faced the same defender pair last match
-- Small random noise (0-0.4) for variety
-
-#### 2. **First Match Generation** (`genFirstMatch`)
-- Scores all players by urgency
-- Selects top 4 players fairly
-- Forms best pairing from these 4 players using `formPairs()`
-- Remaining players go to waiting queue
-
-#### 3. **Pair Formation** (`formPairs`)
-For any 4 selected players, tries all 3 possible pairings:
-- `[[0,1], [2,3]]` - First vs Last
-- `[[0,2], [1,3]]` - Criss-cross
-- `[[0,3], [1,2]]` - Cross
-Picks the best based on gender mix and partner/opponent history.
-
-#### 4. **Next Match Generation** (`genNextMatch`)
-- Winners stay as defending team
-- Pool = losers + waiting players
-- Algorithm picks best challenger pair from pool
-- Remaining pool becomes new waiting queue
-- If defending team hits max streak (2 wins), call `genFirstMatch()` instead to rotate them out
+```
+Setup → Start Game
+          ↓
+    genFirstMatch()          ← fair draw from all players
+          ↓
+   [Match in progress]       ← score tracking, side switching
+          ↓
+    recordWin(team)
+          ↓
+    defenderWon AND streak >= MAX_STREAK (2)?
+      YES → genFirstMatch()  ← rotate out; full fresh fair draw
+      NO  → genNextMatch()   ← winners stay, pick best challengers from pool
+          ↓
+   [Repeat indefinitely]
+```
 
 ---
 
-## Technical Stack
+## Algorithm Details
 
-### Frontend
-- **HTML5** - Single-page application structure
-- **CSS3** - Modern responsive design with:
-  - CSS Grid for layout
-  - CSS Variables for theming (green, blue, pink, amber, purple colors)
-  - Smooth animations (fadeIn, pulse effects)
-  - Mobile-responsive breakpoint (max-width: 420px)
-  - Glass-morphism inspired cards with shadows
+### Player Selection for First Match (`genFirstMatch`)
 
-### JavaScript (Vanilla)
-- **No frameworks** - Pure vanilla JS for maximum performance
-- **State Management** - Single object `S` with:
-  - `players[]` - Player list with stats
-  - `match` - Current match data
-  - `history[]` - All recorded matches
-  - `round` - Current round number
-- **LocalStorage API** - Client-side persistence
-- **UUID Generation** - For unique player IDs (fallback to timestamp)
+Scores every player:
+```
+score = waitCount × 3 + max(0, avgGamesPlayed − gamesPlayed) + random(0, 0.5)
+```
+Top 4 play, the rest wait. `waitCount` is reset to 0 for the 4 who get to play.
 
-### Design
-- **Color Scheme**: Green (primary), Blue (Team 1), Pink (Team 2), Amber (Defending), Purple (Challenger)
-- **Typography**: System font stack (Segoe UI, system-ui, sans-serif)
-- **Responsive**: Works on desktop and mobile (420px breakpoint)
-- **Accessibility**: Good contrast, semantic HTML
+### Challenger Selection (`pickChallengers`)
+
+Pool = losers + previous waiting players. Tries every pair combination from the pool and picks the highest-scoring pair via `scorePair()`.
+
+### Pair Scoring (`scorePair`)
+
+```
+score = (a.waitCount × 3 + max(0, avg − a.gamesPlayed))
+      + (b.waitCount × 3 + max(0, avg − b.gamesPlayed))
+      + 4   if mixed gender (M+F)
+      − 4   if they were recent partners
+      − 5   if they already faced defenderIds[0] recently
+      − 5   if they already faced defenderIds[1] recently   ← checks BOTH defenders
+      + random(0, 2)                                        ← enough variance to avoid deterministic repeats
+```
+
+Both defenders are checked for rematch avoidance (bug fix: previously only `defenderIds[0]` was checked).
+
+### Team Split Scoring (`scoreSplit` / `formPairs`)
+
+Given 4 chosen players, tries all 3 possible splits into 2 teams:
+- `[0,1] vs [2,3]`
+- `[0,2] vs [1,3]`
+- `[0,3] vs [1,2]`
+
+Each split is scored: `+4` per mixed-gender pair, `−4` per repeated partner pair, `+random(0, 1.5)`.
+
+### Champion Streak Rule
+
+- `MAX_STREAK = 2` (hardcoded)
+- If defenders win 2 times in a row → `rotateOut = true` → `genFirstMatch()` (fresh fair draw)
+- Champions who rotate out have high `gamesPlayed` and low `waitCount` → naturally low priority in next draw
 
 ---
 
 ## Data Structure
 
+### State Object `S`
+```javascript
+{
+  players: [...],   // array of Player objects
+  match: {...},     // current Match object (null before game starts)
+  history: [...],   // array of HistoryRecord, newest first
+  round: 0,         // current round number
+  started: false    // whether game phase is active
+}
+```
+
 ### Player Object
 ```javascript
 {
-  id: "uuid or timestamp",
+  id: "uuid",
   name: "Player Name",
-  gender: "M" or "F",
+  gender: "M" | "F",
   gamesPlayed: 0,
   wins: 0,
   waitCount: 0,
-  lastPartnerId: "uuid or null",
-  lastOpponentIds: ["uuid1", "uuid2"]
+  lastPartnerIds: ["uuid", "uuid"],   // last 2 partners (array, not single value)
+  lastOpponentIds: ["uuid", ...]      // last 4 opponents
 }
 ```
 
@@ -140,7 +120,11 @@ Picks the best based on gender mix and partner/opponent history.
   waiting: ["player_id5", ...],
   isDefending: false,
   streak: 0,
-  defenderSide: 1 or 2  // only when isDefending=true
+  defenderSide: 1 | 2,   // only meaningful when isDefending=true
+  score1: 0,              // score for team1
+  score2: 0,              // score for team2
+  courtSide: 1 | 2,       // 1 = team1 at bottom, 2 = team2 at bottom
+  scoreHistory: [...]     // stack of {score1, score2} for undo
 }
 ```
 
@@ -150,7 +134,7 @@ Picks the best based on gender mix and partner/opponent history.
   round: 1,
   t1Names: ["Name1", "Name2"],
   t2Names: ["Name3", "Name4"],
-  winner: 1 or 2,
+  winner: 1 | 2,
   isDefending: false,
   defenderWon: false,
   oldStreak: 0,
@@ -162,113 +146,82 @@ Picks the best based on gender mix and partner/opponent history.
 
 ---
 
-## Game Flow
-
-1. **Setup** → Add 4+ players with gender
-2. **Start Game** → First match created (fair 4-player draw + best pairing)
-3. **Record Win** → Update stats, check if rotation needed
-4. **Generate Next** → Either:
-   - Fresh fair draw (if defenders hit 2-win limit) 🔄
-   - Or: Defenders stay vs best challengers from pool ⚔️
-5. **Repeat** → Continue indefinitely
-6. **View Stats** → See all-time player statistics
-7. **View History** → See past match results and streaks
-
----
-
-## UI Screens
+## UI & Screens
 
 ### Setup Screen
-- Header: "🏸 จัดก๊วนแบดมินตัน"
-- Tagline: "แชมป์อยู่ต่อ · จับคู่หลากหลาย · เล่นแฟร์ทุกคน"
-- Add player form (name input + M/F toggle)
-- Player list with gender badges
-- Start Game button (disabled until 4+ players)
+- Add player form: text input + M/F gender toggle
+- Player list with colored gender badges (`badge-M` = blue solid, `badge-F` = pink solid)
+- Player count summary: `"N คน (M3 F2) — พร้อมเล่นได้เลย!"`
+- Start Game button (disabled until ≥ 4 players)
+- Load mock data button (10 test players)
 
 ### Game Screen
-- Round pill (e.g., "เกมที่ 1")
-- Match card showing:
-  - Current matchup with teams and genders
-  - Streak banner if defending
-  - Win buttons
-- Waiting queue
-- Tabs: Player Stats | Match History
+- **Round pill** at top
+- **Match card**: current teams with gender icons, streak banner, win buttons
+  - Win recording shows a confirm modal before committing
+- **Score card** with SVG badminton court:
+  - Real court lines: outer boundary, singles alleys, long/short service lines, center line, net with posts
+  - Background dark green (`#2e6b25`)
+  - **team1 = red** (`#fecaca` score, `#fca5a5` name), **team2 = blue** (`#bfdbfe` score, `#93c5fd` name)
+  - Colors follow the team when sides are swapped (not the position)
+  - Side-swap button triggers a 3D flip animation (`rotateX` 0→90°→ swap content →−90°→0°)
+  - Score buttons: `+1 ฝั่งบน`, `+1 ฝั่งล่าง`, `↩ ยกเลิก +1` (undo, disabled when no history), `รีเซ็ตคะแนน`
+- **Waiting queue** with chip cards per player
+- **Stats table** and **History log** below
 
-### Interactive Elements
-- **Add Form**: Input name + gender radio + Add button
-- **Win Buttons**: Click to record which team won
-- **Tab Navigation**: Switch between stats and history
-- **Edit/Clear**: Edit players or clear all data
-
----
-
-## Localization
-
-- **Language**: Thai (ภาษาไทย)
-- **UI Text Examples**:
-  - "🏸 จัดก๊วนแบดมินตัน" = "Badminton Grouping"
-  - "เกม" = "Game"
-  - "เล่น" = "Play"
-  - "รักษาแชมป์" = "Defend Champion"
-  - "โค่นแชมป์" = "Overthrow Champion"
-- **Gender**: 
-  - "♂ ชาย" = Male
-  - "♀ หญิง" = Female
-- **Pair Types**:
-  - "★ คู่ผสม" = Mixed Doubles
-  - "ชายคู่" = Men's Doubles
-  - "หญิงคู่" = Women's Doubles
+### Modals
+- `#confirm-modal` — used by `requestRecordWin()` to confirm match result before committing
+- `#app-modal` — general-purpose confirm dialog used by `showConfirm()` (clearAll, load mock data)
 
 ---
 
-## Usage Instructions
+## Key Functions Reference
 
-1. **Open the app** in any modern browser
-2. **Enter player names** - minimum 4 required
-3. **Select gender** for each player
-4. **Click "เริ่มเกม" (Start Game)**
-5. **See the first match** - 4 fairly selected players paired optimally
-6. **Click winning team** - records result
-7. **Next match** appears with defenders vs best challengers
-8. **View stats** - see who's played most, won most, etc.
-9. **View history** - see all past match results
+| Function | Purpose |
+|---|---|
+| `genFirstMatch()` | Fair player selection + team formation for first round or after rotate-out |
+| `genNextMatch(winnerIds, loserIds, waiting, streak, side)` | Defenders stay; pick best challengers from pool |
+| `recordWin(team)` | Update all stats, history, decide next match type |
+| `scorePair(a, b, defenderIds, avg)` | Score a potential challenger pair |
+| `scoreSplit(split, ids)` | Score one of 3 possible team splits |
+| `formPairs(ids)` | Pick best team split from 4 player IDs |
+| `pickChallengers(pool, defenderIds)` | Find best 2-player pair from pool |
+| `hasRecentPartner(a, b)` | Check if a and b partnered in last 2 rounds |
+| `incrementScore(side)` | Add 1 to top/bottom side, saves to scoreHistory |
+| `undoScore()` | Pop last score state from scoreHistory |
+| `switchCourtSide()` | Flip courtSide 1↔2 with 3D animation |
+| `requestRecordWin(team)` | Open confirm modal before recording win |
+| `confirmRecordWin()` | Execute recordWin after modal confirmation |
+| `showConfirm(msg, cb, title, confirmText, cancelText)` | General-purpose confirm dialog using #app-modal |
+| `renderGame()` | Re-render full game screen (court, teams, stats, history) |
+| `save()` / `load()` | Persist/restore `S` from localStorage key `'badminton-v3'` |
 
 ---
 
-## Project Files
+## Technical Stack
 
-- **index.html** - Complete single-file application (HTML + CSS + JavaScript)
-- **README.md** - Simple link to live demo
-- **PROJECT_SUMMARY.md** - This file, comprehensive documentation
-
----
-
-## Browser Support
-
-- Chrome/Edge 90+
-- Firefox 88+
-- Safari 14+
-- Any modern browser with:
-  - ES6 JavaScript support
-  - LocalStorage API
-  - CSS Grid & Flexbox
-  - CSS Custom Properties (variables)
+- **Single HTML file** — no build step, no npm, no external dependencies
+- **Vanilla JS** — ES6+, no frameworks
+- **CSS** — CSS variables, Grid, Flexbox, 3D transforms, SVG for court
+- **localStorage** — key `'badminton-v3'`, JSON-serialized state
+- **State** — single mutable object `S`, cloned via `cloneState()` for undo
 
 ---
 
 ## Notes for AI
 
-When reading this codebase, understand:
-1. The app is **purely client-side** (no server)
-2. All data is stored in **browser localStorage**
-3. The **pairing algorithm** prioritizes fairness over randomness
-4. **Defending mode** is a game mechanic to make winners stay until they hit a streak limit
-5. The UI uses **emoji heavily** for visual language (Thai-friendly)
-6. All styling is **inline CSS** in one HTML file (no external dependencies)
-7. The algorithm balances:
-   - **Play count fairness** (equal games for everyone)
-   - **Gender mixing** (prefer mixed doubles)
-   - **Partner variety** (avoid repeating pairs)
-   - **Competitive balance** (good matchups)
-   - **Streak limit** (prevent domination, ensure rotation)
-
+1. **Single file** — all HTML, CSS, and JS are in `index.html`. No other source files.
+2. **State is global** — `S` is the single source of truth. `prevState` holds one level of match-level undo (for undoing the entire last match result, separate from `scoreHistory` which is for per-point undo).
+3. **`renderGame()` is called after every state change** — it re-renders the full game view from scratch.
+4. **Court colors are team-based, not position-based** — red = team1 always, blue = team2 always; `isBottomTeam1` determines which color goes top/bottom.
+5. **Gender uses M/F strings** — not symbols. `gender === 'M'` or `gender === 'F'`.
+6. **`lastPartnerIds` is an array of up to 2 IDs** — not a single value (old docs said `lastPartnerId`).
+7. **Algorithm balances** (in order of weight):
+   - Play count fairness (waitCount × 3 dominates)
+   - Games-below-average factor
+   - Mixed gender preference (+4)
+   - Partner/opponent repeat avoidance (−4/−5)
+   - Random noise (0–2) to prevent identical outcomes each session
+8. **Streak limit is 2** (`MAX_STREAK = 2`) — after 2 consecutive defending wins, rotate out via `genFirstMatch()`.
+9. **Both defenders are checked for rematch avoidance** — `scorePair` penalizes challenger pairs that previously faced either `defenderIds[0]` or `defenderIds[1]`.
+10. **Score undo is per-point** — `scoreHistory` stack in match object; separate from `prevState` which is whole-match undo.

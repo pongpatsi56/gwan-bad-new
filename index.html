@@ -362,12 +362,14 @@ function scorePair(a, b, defenderIds, avgGames) {
   if (a.gender !== b.gender) score += 4;
   // Avoid repeat partners across recent rounds
   if (hasRecentPartner(a, b)) score -= 4;
-  // Avoid rematch against the same defending team
+  // Avoid rematch against the same defending team (check both defenders)
   if (defenderIds) {
     const d0opps = (P(defenderIds[0]).lastOpponentIds || []);
+    const d1opps = (P(defenderIds[1]).lastOpponentIds || []);
     if (d0opps.includes(a.id) && d0opps.includes(b.id)) score -= 5;
+    if (d1opps.includes(a.id) && d1opps.includes(b.id)) score -= 5;
   }
-  return score + Math.random() * 0.4;
+  return score + Math.random() * 2;
 }
 
 // Pick the best 2 challengers from pool (array of player IDs).
@@ -392,7 +394,7 @@ function scoreSplit(split, ids) {
     if (a.gender !== b.gender) score += 4;
     if (hasRecentPartner(a, b)) score -= 4;
   }
-  return score + Math.random() * 0.15;
+  return score + Math.random() * 1.5;
 }
 
 // Pick best pairing from 4 selected IDs.
