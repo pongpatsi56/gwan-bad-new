@@ -54,8 +54,8 @@
     .gender-badge { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
     .gender-icon { display: inline-flex; align-items: center; justify-content: center; width: 1rem; height: 1rem; border-radius: 999px; }
     .gender-icon svg { width: 0.85rem; height: 0.85rem; }
-    .badge-M { background: var(--blue-light); color: var(--blue); }
-    .badge-F { background: var(--pink-light); color: var(--pink); }
+    .badge-M { background: var(--blue); color: white; }
+    .badge-F { background: var(--pink); color: white; }
     .tpname { display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; font-size: 0.95rem; font-weight: 700; line-height: 1.5; }
     .remove-btn { background: none; border: none; cursor: pointer; color: var(--gray); font-size: 1.1rem; padding: 2px 6px; border-radius: 6px; transition: all 0.15s; line-height: 1; }
     .remove-btn:hover { background: #fee2e2; color: #ef4444; }
@@ -113,21 +113,26 @@
     .score-card { border-radius: var(--radius-sm); padding: 16px; margin-bottom: 14px; background: linear-gradient(135deg, #ebf8f1, #d9f7d8); border: 1px solid #a7d7a0; }
     .scorecard-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
     .court-note { font-size: 0.82rem; color: #25472e; margin-top: 4px; }
-    .court-view { position: relative; border: 2px solid #4f9c2d; border-radius: 20px; background: linear-gradient(180deg, #d9f7d8 0%, #b7e4b3 100%); min-height: 280px; display: grid; grid-template-rows: 1.1fr 32px 1.1fr; overflow: hidden; }
-    .court-view::before { content: ''; position: absolute; inset: 12px; border: 2px solid rgba(255,255,255,0.75); border-radius: 18px; pointer-events: none; }
-    .court-side { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 18px 12px; position: relative; }
-    .court-top { border-bottom: 1px dashed rgba(255,255,255,0.55); }
-    .court-bottom { border-top: 1px dashed rgba(255,255,255,0.55); }
-    .court-net { display: flex; align-items: center; justify-content: center; color: #1f2937; font-size: 1rem; letter-spacing: 0.12em; font-weight: 800; text-transform: uppercase; }
-    .court-net::before, .court-net::after { content: ''; flex: 1; height: 1px; background: rgba(31,41,55,0.2); margin: 0 14px; }
-    .court-team { font-weight: 800; color: #17360f; margin-bottom: 8px; white-space: nowrap; font-size: 0.98rem; }
-    .court-score { font-size: 3.4rem; font-weight: 900; color: #1f5f2d; letter-spacing: -0.05em; }
-    .court-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+    .court-view { position: relative; border: 2px solid #2d6a22; border-radius: 16px; background: #2e6b25; min-height: 420px; overflow: hidden; }
+    .court-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .court-side { position: absolute; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 46%; z-index: 1; }
+    .court-top { top: 0; }
+    .court-bottom { bottom: 0; }
+    .court-net { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 2; background: rgba(0,0,0,0.55); color: rgba(255,255,255,0.9); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.14em; padding: 2px 10px; border-radius: 4px; }
+    .court-team { font-weight: 800; color: rgba(255,255,255,0.95); margin-bottom: 6px; white-space: nowrap; font-size: 0.95rem; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
+    .court-score { font-size: 3.6rem; font-weight: 900; letter-spacing: -0.05em; }
+    .score-c1 { color: #fecaca; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 2px 16px rgba(239,68,68,0.8); }
+    .score-c2 { color: #bfdbfe; text-shadow: 0 0 2px rgba(0,0,0,0.9), 0 2px 16px rgba(59,130,246,0.8); }
+    .team-c1 { color: #fca5a5; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
+    .team-c2 { color: #93c5fd; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
+    .court-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 14px; }
     .court-actions button { width: 100%; }
     .gender-icon { display: inline-flex; align-items: center; justify-content: center; width: 0.95rem; height: 0.95rem; border-radius: 999px; font-weight: 700; color: white; font-size: 0.75rem; margin-right: 6px; }
     .gender-letter { display: inline-flex; align-items: center; justify-content: center; width: 0.95rem; height: 0.95rem; border-radius: 999px; font-weight: 700; font-size: 0.75rem; }
-    .badge-M .gender-letter, .gender-icon.M { background: var(--blue); }
-    .badge-F .gender-letter, .gender-icon.F { background: var(--pink); }
+    .badge-M .gender-letter { background: rgba(255,255,255,0.25); color: white; }
+    .badge-F .gender-letter { background: rgba(255,255,255,0.25); color: white; }
+    .gender-icon.M { background: var(--blue); }
+    .gender-icon.F { background: var(--pink); }
 
     /* Waiting */
     .waiting-chips { display: flex; flex-wrap: wrap; gap: 7px; }
@@ -201,6 +206,16 @@
     </div>
   </div>
 </div>
+<div id="confirm-modal" class="modal hidden" onclick="if (event.target === this) closeConfirmModal()">
+  <div class="modal-card">
+    <div class="modal-title">ยืนยันผล</div>
+    <div id="confirm-text" class="modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-gray btn-sm" onclick="closeConfirmModal()">ยกเลิก</button>
+      <button class="btn btn-green btn-sm" onclick="confirmRecordWin()">ยืนยัน</button>
+    </div>
+  </div>
+</div>
 <div class="container">
   <header>
     <h1>🏸 จัดก๊วนแบดมินตัน</h1>
@@ -215,9 +230,9 @@
         <input id="name-in" class="name-input" type="text" placeholder="ชื่อผู้เล่น..." maxlength="20">
         <div class="gender-toggle">
           <input type="radio" name="g" id="gM" value="M" checked>
-          <label for="gM">♂ ชาย</label>
+          <label for="gM">M ชาย</label>
           <input type="radio" name="g" id="gF" value="F">
-          <label for="gF">♀ หญิง</label>
+          <label for="gF">F หญิง</label>
         </div>
         <button class="btn btn-green" onclick="addPlayer()">+ เพิ่ม</button>
       </div>
@@ -263,8 +278,9 @@
       <div class="court-view" id="court-view"></div>
       <div class="court-actions">
         <button class="btn btn-gray btn-sm" onclick="incrementScore(2)">+1 ฝั่งบน</button>
-        <button class="btn btn-gray btn-sm" onclick="resetScore()">รีเซ็ตคะแนน</button>
         <button class="btn btn-gray btn-sm" onclick="incrementScore(1)">+1 ฝั่งล่าง</button>
+        <button class="btn btn-gray btn-sm" onclick="undoScore()" id="undo-score-btn" disabled>↩ ยกเลิก +1</button>
+        <button class="btn btn-gray btn-sm" onclick="resetScore()">รีเซ็ตคะแนน</button>
       </div>
     </div>
 
@@ -547,8 +563,28 @@ function closeConfirmModal() {
   modal.classList.add('hidden');
 }
 
+function showConfirm(message, onConfirm, title, confirmText, cancelText) {
+  document.getElementById('modal-title').textContent = title || 'ยืนยัน';
+  document.getElementById('modal-body').textContent = message;
+  document.getElementById('modal-cancel').textContent = cancelText || 'ยกเลิก';
+  const confirmBtn = document.getElementById('modal-confirm');
+  confirmBtn.textContent = confirmText || 'ยืนยัน';
+  confirmBtn.onclick = () => { closeModal(); onConfirm(); };
+  const modal = document.getElementById('app-modal');
+  modal.classList.remove('hidden');
+  modal.classList.add('show');
+}
+
+function closeModal() {
+  const modal = document.getElementById('app-modal');
+  modal.classList.remove('show');
+  modal.classList.add('hidden');
+}
+
 function incrementScore(side) {
   if (!S.match) return;
+  if (!S.match.scoreHistory) S.match.scoreHistory = [];
+  S.match.scoreHistory.push({ score1: S.match.score1, score2: S.match.score2 });
   if (side === 1) {
     S.match.courtSide === 1 ? S.match.score1++ : S.match.score2++;
   } else {
@@ -557,17 +593,37 @@ function incrementScore(side) {
   save(); renderGame();
 }
 
+function undoScore() {
+  if (!S.match || !S.match.scoreHistory || !S.match.scoreHistory.length) return;
+  const prev = S.match.scoreHistory.pop();
+  S.match.score1 = prev.score1;
+  S.match.score2 = prev.score2;
+  save(); renderGame();
+}
+
 function resetScore() {
   if (!S.match) return;
   S.match.score1 = 0;
   S.match.score2 = 0;
+  S.match.scoreHistory = [];
   save(); renderGame();
 }
 
 function switchCourtSide() {
   if (!S.match) return;
-  S.match.courtSide = S.match.courtSide === 1 ? 2 : 1;
-  save(); renderGame();
+  const courtView = document.getElementById('court-view');
+  courtView.style.transition = 'transform 0.18s ease-in';
+  courtView.style.transform = 'perspective(800px) rotateX(90deg)';
+  setTimeout(() => {
+    S.match.courtSide = S.match.courtSide === 1 ? 2 : 1;
+    save(); renderGame();
+    courtView.style.transition = 'none';
+    courtView.style.transform = 'perspective(800px) rotateX(-90deg)';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      courtView.style.transition = 'transform 0.18s ease-out';
+      courtView.style.transform = 'perspective(800px) rotateX(0deg)';
+    }));
+  }, 180);
 }
 
 function goSetup() {
@@ -676,8 +732,8 @@ function renderSetup() {
         <button class="remove-btn" onclick="removePlayer('${p.id}')">✕</button>
       </div>`).join('');
   document.getElementById('p-hint').textContent = n < 4
-    ? `${n} คน — ต้องการอีก ${4 - n} คน (♂${males} ♀${females})`
-    : `${n} คน (♂${males} ♀${females}) — พร้อมเล่นได้เลย! 🎉`;
+    ? `${n} คน — ต้องการอีก ${4 - n} คน (M${males} F${females})`
+    : `${n} คน (M${males} F${females}) — พร้อมเล่นได้เลย! 🎉`;
   document.getElementById('start-btn').disabled = n < 4;
 }
 
@@ -758,17 +814,51 @@ function renderGame() {
   const bottomScore = isBottomTeam1 ? m.score1 : m.score2;
   const topName = topTeam.map(id => P(id).name).join(' & ');
   const bottomName = bottomTeam.map(id => P(id).name).join(' & ');
+  const topColorClass    = isBottomTeam1 ? 'score-c2' : 'score-c1';
+  const bottomColorClass = isBottomTeam1 ? 'score-c1' : 'score-c2';
+  const topTeamClass    = isBottomTeam1 ? 'team-c2' : 'team-c1';
+  const bottomTeamClass = isBottomTeam1 ? 'team-c1' : 'team-c2';
+  const topFill    = isBottomTeam1 ? 'rgba(96,165,250,0.08)' : 'rgba(255,80,80,0.08)';
+  const bottomFill = isBottomTeam1 ? 'rgba(255,80,80,0.08)' : 'rgba(96,165,250,0.08)';
   courtView.innerHTML = `
+    <svg class="court-svg" viewBox="0 0 100 220" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Half-court tints -->
+      <rect x="1" y="1" width="98" height="108" fill="${topFill}"/>
+      <rect x="1" y="111" width="98" height="108" fill="${bottomFill}"/>
+      <!-- Outer boundary -->
+      <rect x="1" y="1" width="98" height="218" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/>
+      <!-- Singles sidelines (alleys) -->
+      <line x1="7.5" y1="1" x2="7.5" y2="219" stroke="rgba(255,255,255,0.5)" stroke-width="0.9"/>
+      <line x1="92.5" y1="1" x2="92.5" y2="219" stroke="rgba(255,255,255,0.5)" stroke-width="0.9"/>
+      <!-- Long service lines (doubles) -->
+      <line x1="1" y1="12.5" x2="99" y2="12.5" stroke="rgba(255,255,255,0.7)" stroke-width="1"/>
+      <line x1="1" y1="207.5" x2="99" y2="207.5" stroke="rgba(255,255,255,0.7)" stroke-width="1"/>
+      <!-- Short service lines -->
+      <line x1="1" y1="77.5" x2="99" y2="77.5" stroke="rgba(255,255,255,0.85)" stroke-width="1.1"/>
+      <line x1="1" y1="142.5" x2="99" y2="142.5" stroke="rgba(255,255,255,0.85)" stroke-width="1.1"/>
+      <!-- Center service lines -->
+      <line x1="50" y1="12.5" x2="50" y2="77.5" stroke="rgba(255,255,255,0.7)" stroke-width="1"/>
+      <line x1="50" y1="142.5" x2="50" y2="207.5" stroke="rgba(255,255,255,0.7)" stroke-width="1"/>
+      <!-- Net shadow -->
+      <rect x="0" y="107" width="100" height="6" fill="rgba(0,0,0,0.35)" rx="1"/>
+      <!-- Net cord -->
+      <line x1="0" y1="110" x2="100" y2="110" stroke="rgba(255,255,255,0.92)" stroke-width="2"/>
+      <!-- Net posts -->
+      <line x1="0.5" y1="103" x2="0.5" y2="117" stroke="rgba(255,255,255,0.6)" stroke-width="2.5"/>
+      <line x1="99.5" y1="103" x2="99.5" y2="117" stroke="rgba(255,255,255,0.6)" stroke-width="2.5"/>
+    </svg>
     <div class="court-side court-top">
-      <div class="court-team">${h(topName)}</div>
-      <div class="court-score">${topScore}</div>
+      <div class="court-team ${topTeamClass}">${h(topName)}</div>
+      <div class="court-score ${topColorClass}">${topScore}</div>
     </div>
     <div class="court-net">NET</div>
     <div class="court-side court-bottom">
-      <div class="court-team">${h(bottomName)}</div>
-      <div class="court-score">${bottomScore}</div>
+      <div class="court-team ${bottomTeamClass}">${h(bottomName)}</div>
+      <div class="court-score ${bottomColorClass}">${bottomScore}</div>
     </div>`;
   orientationText.textContent = `คุณนับคะแนนจากฝั่งล่าง — ${bottomName}`;
+  const undoScoreBtn = document.getElementById('undo-score-btn');
+  if (undoScoreBtn) undoScoreBtn.disabled = !(m.scoreHistory && m.scoreHistory.length);
 
   renderStats(); renderHistory();
 }
